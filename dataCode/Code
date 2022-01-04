@@ -1,0 +1,2 @@
+Code in MySQL using APOC in order to creater a server that would connect to Neo4J to import the cleaned data. 
+Neo4J quiries created in order to analyze the song data and gather insight about the data.
