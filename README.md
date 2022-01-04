@@ -76,7 +76,7 @@ The project reveals that song similarity is not specific to a singular genre or 
 
 The music industry is always evolving. This exploration reveals that despite nuances in sounds, there remains similarity amongst core attributes of songs. It suggests that there are features that are integral to creating songs and perhaps in differentiating sound from the song.
 
-## Further Exploration\
+## Further Exploration
 ● It would be interesting to perform the same queries on Euclidean Distances computed using all available song attributes.\
 ● It would also be interesting to have more data about the music industry such as producers, writers, singers, etc. An examination of connections between these additional attributes may highlight new connections between seemingly unrelated aspects of the industry.\
 ● A similar analysis on songs of non-western origin would also be interesting. The core similarities discovered in Western songs may no longer be present, suggesting a fundamental difference between musical spheres. Conversely, if the same similarities are present in both spheres, it may lend information about what differentiates sound from the song.\
