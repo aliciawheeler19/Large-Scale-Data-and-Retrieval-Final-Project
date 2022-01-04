@@ -1,10 +1,11 @@
 # Large-Scale-Data-and-Retrieval-Final-Project
 DS4300 Final Project Alicia Wheeler, Daniel Rossshirt, Tatum Gaudinski Whitehead, Jialin Zhen
 
-Abstract
+## Abstract
 This project leverages the unique graphing capabilities of Neo4J to perform an exploratory analysis on statistical differences between the categorical and quantitative attributes of songs. The goal is to examine trends and relationships between songs to further understand the music industry and the structure of songs. The examination is performed in a Neo4J network graph. Queries on the graph revealed that songs distinguished by decade and genre still have similar attributes to other genres and decades; there are consistency between-song attributes across the many genres/decades in the industry.
-Process
-Initially, our group desired to create an engine to recommend songs to users. That is cliche and had already been done so we changed courses. We began our project using MongoDB but quickly decided that Neo4J would better suit our needs. Instead of trying to implement our own version of the Spotify “Go to Song Radio'' feature as discussed in the project proposal, we pursued an exploration of attribute similarity across genre and decade.
+
+### Process
+  Initially, our group desired to create an engine to recommend songs to users. That is cliche and had already been done so we changed courses. We began our project using MongoDB but quickly decided that Neo4J would better suit our needs. Instead of trying to implement our own version of the Spotify “Go to Song Radio'' feature as discussed in the project proposal, we pursued an exploration of attribute similarity across genre and decade.
 There are vast numbers of unique sounding songs. The purpose of this exploration is to understand features that differentiate songs from one another and explore possible connections between genres and decades of songs.
 Design
 Data Collection
