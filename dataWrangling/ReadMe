@@ -1,0 +1,2 @@
+The Jupyter Notebook file created in order to clean and normalize the song dataset from Spotify.
+The data file from Spotify and then the cleaned data files broken down into nodes and links for the correct importation of the data into Neo4J.
