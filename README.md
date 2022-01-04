@@ -28,8 +28,7 @@ Disabling the “connect result nodes” function in the graph visualization set
  
 ## Results & Analysis
 The analysis compares euclidean distance to identify patterns between songs with low euclidean distances using categorical attributes. Three thresholds for euclidean distance are queried to compare the songs:\
-● n.euclidean < 0.121576\
-● n.euclidean < 0.206442\
-● n.euclidean < 0.259790\
-1st percentile 5th percentile 10th percentile
+● n.euclidean < 0.121576 1st percentile\
+● n.euclidean < 0.206442 5th percentile\
+● n.euclidean < 0.259790 10th percentile\
 Thresholds are selected from percentile values obtained from a call to the .describe() method on Pandas DataFrame in the preprocessing portion of the project. An in-depth report of categorical attributes queried at percentile thresholds can be found here. Queries to the Neo4J graph produced visualizations of songs clustered by links that met the specified euclidean threshold. Links between categorical attributes genre and decade are examined for each threshold.
