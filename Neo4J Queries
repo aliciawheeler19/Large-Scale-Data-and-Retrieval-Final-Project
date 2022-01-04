@@ -1,0 +1,387 @@
+MySQL APOC Views:
+Created user songs with password songs and has access to one schema called songs. In the songs schema there are two tables, node and links.
+
+use song;
+
+-- 4950 links in total
+select count(*) from links;
+
+-- 100 songs in total
+select count(*) from node;
+
+-- Create the views for Neo4J 
+
+-- view for link
+drop view link;
+create view link as
+select *
+from links
+order by euclidean
+limit 1000;
+
+-- view for node
+create view nodes as
+select * from node;
+
+
+-------------------------------------------------------------
+
+Import data into Neo4J:
+
+match (n) detach delete n
+
+call apoc.load.jdbc("jdbc:mysql://localhost:3306/song?serverTimezone=EST5EDT&user=songs&password=songs", "nodes") YIELD row
+merge (s:Song {track:row.track, artist:row.artist, tempo:row.tempo, danceability:row.danceability, acousticness:row.acousticness, energy:row.energy, decade:row.decade, genre:row.genre})
+return s;
+
+call apoc.load.jdbc("jdbc:mysql://localhost:3306/song?serverTimezone=EST5EDT&user=songs&password=songs", "link") YIELD row
+merge (s:Song{track:row.track1})
+merge (s2:Song{track:row.track2})
+create (s)-[:euclidean{euclidean:row.euclidean}]->(s2)
+return s, s2;
+
+
+Quieres Run in Neo4J (Removed in Settings Connect Result Nodes):
+
+// Similarity Euclidean distance scores comparison
+
+// 1th percentile track relations: highest similarity
+match (s1:Song)-[n:euclidean]-(s2:Song)
+where n.euclidean < 0.121576
+return s1, n, s2;
+
+// 5th percentile track relations: medium similarity
+match (s1:Song)-[n:euclidean]-(s2:Song)
+where n.euclidean < 0.206442
+return s1, n, s2;
+
+// 10th percentile track relations: weak similarity
+match (s1:Song)-[n:euclidean]-(s2:Song)
+where n.euclidean < 0.259790
+return s1, n, s2;
+
+
+// Characteristic clustering depending on Euclidean distance scores and of one genre.   
+
+// characteristic filter for r&b in the 1st percentile to other songs
+match (s1:Song{genre:"r&b"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.121576
+return s1, n, s2;
+
+// characteristic filter for r&b in the 5st percentile to other songs
+match (s1:Song{genre:"r&b"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.206442
+return s1, n, s2;
+
+// characteristic filter for r&b in the 10st percentile to other songs
+match (s1:Song{genre:"r&b"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.259790
+return s1, n, s2;
+
+// characteristic filter for rock in the 1st percentile to other songs
+match (s1:Song{genre:"rock"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.121576
+return s1, n, s2;
+
+// characteristic filter for rock in the 5st percentile to other songs
+match (s1:Song{genre:"rock"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.206442
+return s1, n, s2;
+
+// characteristic filter for rock in the 10st percentile to other songs
+match (s1:Song{genre:"rock"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.259790
+return s1, n, s2;
+
+// characteristic filter for edm in the 1st percentile to other songs
+match (s1:Song{genre:"edm"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.121576
+return s1, n, s2;
+
+// characteristic filter for edm in the 5st percentile to other songs
+match (s1:Song{genre:"edm"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.206442
+return s1, n, s2;
+
+// characteristic filter for edm in the 10st percentile to other songs
+match (s1:Song{genre:"edm"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.259790
+return s1, n, s2;
+
+// characteristic filter for rap in the 1st percentile to other songs
+match (s1:Song{genre:"rap"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.121576
+return s1, n, s2;
+
+// characteristic filter for rap in the 5st percentile to other songs
+match (s1:Song{genre:"rap"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.206442
+return s1, n, s2;
+
+// characteristic filter for rap in the 10st percentile to other songs
+match (s1:Song{genre:"rap"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.259790
+return s1, n, s2;
+
+// characteristic filter for latin in the 1st percentile to other songs
+match (s1:Song{genre:"latin"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.121576
+return s1, n, s2;
+
+// characteristic filter for latin in the 5st percentile to other songs
+match (s1:Song{genre:"latin"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.206442
+return s1, n, s2;
+
+// characteristic filter for latin in the 10st percentile to other songs
+match (s1:Song{genre:"latin"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.259790
+return s1, n, s2;
+
+// characteristic filter for pop in the 1st percentile to other songs
+match (s1:Song{genre:"pop"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.121576
+return s1, n, s2;
+
+// characteristic filter for pop in the 5st percentile to other songs
+match (s1:Song{genre:"pop"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.206442
+return s1, n, s2;
+
+// characteristic filter for pop in the 10st percentile to other songs
+match (s1:Song{genre:"pop"})-[n:euclidean]-(s2:Song)
+where n.euclidean <  0.259790
+return s1, n, s2
+
+
+// Characteristic cluster of all the same genre songs by Euclidean distance
+
+// characteristic filter for r&b in the 1st percentile to other r&b songs
+match (s1:Song{genre:"r&b"})-[n:euclidean]-(s2:Song{genre:"r&b"})
+where n.euclidean <  0.121576
+return s1, n, s2;
+
+// characteristic filter for r&b in the 5st percentile to other r&b songs
+match (s1:Song{genre:"r&b"})-[n:euclidean]-(s2:Song{genre:"r&b"})
+where n.euclidean <  0.206442
+return s1, n, s2;
+
+// characteristic filter for r&b in the 10st percentile to other r&b songs
+match (s1:Song{genre:"r&b"})-[n:euclidean]-(s2:Song{genre:"r&b"})
+where n.euclidean <  0.259790
+return s1, n, s2;
+
+// characteristic filter for rock in the 1st percentile to other rock songs
+match (s1:Song{genre:"rock"})-[n:euclidean]-(s2:Song{genre:"rock"})
+where n.euclidean <  0.121576
+return s1, n, s2;
+
+// characteristic filter for rock in the 5st percentile to other rock songs
+match (s1:Song{genre:"rock"})-[n:euclidean]-(s2:Song{genre:"rock"})
+where n.euclidean <  0.206442
+return s1, n, s2;
+
+// characteristic filter for rock in the 10st percentile to other rock songs
+match (s1:Song{genre:"rock"})-[n:euclidean]-(s2:Song{genre:"rock"})
+where n.euclidean <  0.259790
+return s1, n, s2;
+
+// characteristic filter for edm in the 1st percentile to other edm songs
+match (s1:Song{genre:"edm"})-[n:euclidean]-(s2:Song{genre:"edm"})
+where n.euclidean <  0.121576
+return s1, n, s2;
+
+// characteristic filter for edm in the 5st percentile to other edm songs
+match (s1:Song{genre:"edm"})-[n:euclidean]-(s2:Song{genre:"edm"})
+where n.euclidean <  0.206442
+return s1, n, s2;
+
+// characteristic filter for edm in the 10st percentile to other edm songs
+match (s1:Song{genre:"edm"})-[n:euclidean]-(s2:Song{genre:"edm"})
+where n.euclidean <  0.259790
+return s1, n, s2;
+
+// characteristic filter for rap in the 1st percentile to other rap songs
+match (s1:Song{genre:"rap"})-[n:euclidean]-(s2:Song{genre:"rap"})
+where n.euclidean <  0.121576
+return s1, n, s2;
+
+// characteristic filter for rap in the 5st percentile to other rap songs
+match (s1:Song{genre:"rap"})-[n:euclidean]-(s2:Song{genre:"rap"})
+where n.euclidean <  0.206442
+return s1, n, s2;
+
+// characteristic filter for rap in the 10st percentile to other rap songs
+match (s1:Song{genre:"rap"})-[n:euclidean]-(s2:Song{genre:"rap"})
+where n.euclidean <  0.259790
+return s1, n, s2;
+
+// characteristic filter for latin in the 1st percentile to other latin songs
+match (s1:Song{genre:"latin"})-[n:euclidean]-(s2:Song{genre:"latin"})
+where n.euclidean <  0.121576
+return s1, n, s2;
+
+// characteristic filter for latin in the 5st percentile to other latin songs
+match (s1:Song{genre:"latin"})-[n:euclidean]-(s2:Song{genre:"latin"})
+where n.euclidean <  0.206442
+return s1, n, s2;
+
+// characteristic filter for latin in the 10st percentile to other latin songs
+match (s1:Song{genre:"latin"})-[n:euclidean]-(s2:Song{genre:"latin"})
+where n.euclidean <  0.259790
+return s1, n, s2;
+
+// characteristic filter for pop in the 1st percentile to other pop songs
+match (s1:Song{genre:"pop"})-[n:euclidean]-(s2:Song{genre:"pop"})
+where n.euclidean <  0.121576
+return s1, n, s2;
+
+// characteristic filter for pop in the 5st percentile to other pop songs
+match (s1:Song{genre:"pop"})-[n:euclidean]-(s2:Song{genre:"pop"})
+where n.euclidean <  0.206442
+return s1, n, s2;
+
+// characteristic filter for pop in the 10st percentile to other pop songs
+match (s1:Song{genre:"pop"})-[n:euclidean]-(s2:Song{genre:"pop"})
+where n.euclidean <  0.259790
+return s1, n, s2;
+
+
+// Characteristic clustering by the songs from the same decade by Euclidean distance
+
+// 1th percentile decade relation for the 60s
+match (s1:Song{decade:"60s"})-[n:euclidean]-(s2:Song{decade:"60s"})
+where n.euclidean < 0.121576
+return s1, n, s2; 
+
+// 5th percentile decade relation for the 60s
+match (s1:Song{decade:"60s"})-[n:euclidean]-(s2:Song{decade:"60s"})
+where n.euclidean < 0.206442
+return s1, n, s2; 
+
+// 10th percentile decade relation for the 60s
+match (s1:Song{decade:"60s"})-[n:euclidean]-(s2:Song{decade:"60s"})
+where n.euclidean < 0.259790
+return s1, n, s2; 
+
+// decade relation for the 60s
+match (s1:Song{decade:"60s"})-[n:euclidean]-(s2:Song{decade:"60s"})
+return s1, n, s2; 
+
+// 1th percentile decade relation for the 70s
+match (s1:Song{decade:"70s"})-[n:euclidean]-(s2:Song{decade:"70s"})
+where n.euclidean < 0.121576
+return s1, n, s2; 
+
+// 5th percentile decade relation for the 70s
+match (s1:Song{decade:"70s"})-[n:euclidean]-(s2:Song{decade:"70s"})
+where n.euclidean < 0.206442
+return s1, n, s2; 
+
+// 10th percentile decade relation for the 70s
+match (s1:Song{decade:"70s"})-[n:euclidean]-(s2:Song{decade:"70s"})
+where n.euclidean < 0.259790
+return s1, n, s2; 
+
+// decade relation for the 70s
+match (s1:Song{decade:"70s"})-[n:euclidean]-(s2:Song{decade:"70s"})
+return s1, n, s2; 
+
+// 1th percentile decade relation for the 80s
+match (s1:Song{decade:"80s"})-[n:euclidean]-(s2:Song{decade:"80s"})
+where n.euclidean < 0.121576
+return s1, n, s2; 
+
+// 5th percentile decade relation for the 80s
+match (s1:Song{decade:"80s"})-[n:euclidean]-(s2:Song{decade:"80s"})
+where n.euclidean < 0.206442
+return s1, n, s2; 
+
+// 10th percentile decade relation for the 80s
+match (s1:Song{decade:"80s"})-[n:euclidean]-(s2:Song{decade:"80s"})
+where n.euclidean < 0.259790
+return s1, n, s2; 
+
+// decade relation for the 80s
+match (s1:Song{decade:"80s"})-[n:euclidean]-(s2:Song{decade:"80s"})
+return s1, n, s2; 
+
+// 1th percentile decade relation for the 90s
+match (s1:Song{decade:"90s"})-[n:euclidean]-(s2:Song{decade:"90s"})
+where n.euclidean < 0.121576
+return s1, n, s2; 
+
+// 5th percentile decade relation for the 90s
+match (s1:Song{decade:"90s"})-[n:euclidean]-(s2:Song{decade:"90s"})
+where n.euclidean < 0.206442
+return s1, n, s2; 
+
+// 10th percentile decade relation for the 90s
+match (s1:Song{decade:"90s"})-[n:euclidean]-(s2:Song{decade:"90s"})
+where n.euclidean < 0.259790
+return s1, n, s2; 
+
+// decade relation for the 90s
+match (s1:Song{decade:"90s"})-[n:euclidean]-(s2:Song{decade:"90s"})
+return s1, n, s2; 
+
+// 1th percentile decade relation for the 00s
+match (s1:Song{decade:"00s"})-[n:euclidean]-(s2:Song{decade:"00s"})
+where n.euclidean < 0.121576
+return s1, n, s2; 
+
+// 5th percentile decade relation for the 00s
+match (s1:Song{decade:"00s"})-[n:euclidean]-(s2:Song{decade:"00s"})
+where n.euclidean < 0.206442
+return s1, n, s2; 
+
+// 10th percentile decade relation for the 00s
+match (s1:Song{decade:"00s"})-[n:euclidean]-(s2:Song{decade:"00s"})
+where n.euclidean < 0.259790
+return s1, n, s2; 
+
+// decade relation for the 00s
+match (s1:Song{decade:"00s"})-[n:euclidean]-(s2:Song{decade:"00s"})
+return s1, n, s2; 
+
+// 1th percentile decade relation for the 10s
+match (s1:Song{decade:"10s"})-[n:euclidean]-(s2:Song{decade:"10s"})
+where n.euclidean < 0.121576
+return s1, n, s2; 
+
+// 5th percentile decade relation for the 10s
+match (s1:Song{decade:"10s"})-[n:euclidean]-(s2:Song{decade:"10s"})
+where n.euclidean < 0.206442
+return s1, n, s2; 
+
+// 10th percentile decade relation for the 10s
+match (s1:Song{decade:"10s"})-[n:euclidean]-(s2:Song{decade:"10s"})
+where n.euclidean < 0.259790
+return s1, n, s2; 
+
+// decade relation for the 10s
+match (s1:Song{decade:"10s"})-[n:euclidean]-(s2:Song{decade:"10s"})
+return s1, n, s2; 
+
+
+// the count of the number of links between the top 5 songs ranked by # of links
+call {
+    match (n)-[b:euclidean]->(p)
+    with distinct(n) as a, count(b) as c
+    order by c desc limit 5
+    return collect(a) as listonode}
+match (a)-[bb:euclidean]-(otherNode)
+where otherNode in listonode
+return otherNode
+
+
+// the count of the number of links between the top 10 songs ranked by # of links
+call {
+    match (n)-[b:euclidean]-(p)
+    with distinct(n) as a, count(b) as c
+    order by c desc limit 10
+    return collect(a) as listonode}
+match (a)-[bb:euclidean]-(otherNode)
+where otherNode in listonode
+return otherNode
+
